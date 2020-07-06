@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.animation.AnimationSet
+import android.view.animation.AnimationUtils
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -24,6 +25,8 @@ class WordFragment : Fragment() {
         fun newInstance() = WordFragment()
     }
 
+    private lateinit var animBounce: Animation
+    private lateinit var animMove: Animation
     private lateinit var viewModel: WordViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -50,10 +53,22 @@ class WordFragment : Fragment() {
         animIn.startOffset = 3000
         anim.addAnimation(animIn)
 
+        animMove = AnimationUtils.loadAnimation(requireContext(),
+            R.anim.annim)
+
+        animBounce = AnimationUtils.loadAnimation(requireContext(),
+            R.anim.bounce)
+
         view.wordText.setOnClickListener { viewModel.getNewWord() }
+
+        viewModel.fameTimer.observe(viewLifecycleOwner, Observer {
+            view.timerTxtView.text = it.toString()
+            view.timerTxtView.startAnimation(animBounce)
+        })
 
         viewModel.word.observe(viewLifecycleOwner, Observer {
             view.wordText.text = it.toString()
+            view.wordHintText.startAnimation(animMove)
         })
 
 

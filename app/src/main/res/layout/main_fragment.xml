@@ -7,6 +7,40 @@
     android:layout_height="match_parent"
     tools:context=".ui.main.WordFragment">
 
+    <com.google.android.material.card.MaterialCardView
+        android:backgroundTint="@android:color/holo_blue_bright"
+        android:id="@+id/timerTxt"
+        app:cardCornerRadius="40sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="20sp"
+        android:minHeight="80sp"
+        android:minWidth="80sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_gravity="center"
+            android:text="5"
+            android:textStyle="bold"
+            android:textSize="48sp"
+            android:textColor="@android:color/white"
+            android:id="@+id/timerTxtView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </com.google.android.material.card.MaterialCardView>
+
+    <TextView
+        android:textStyle="bold"
+        android:textSize="22sp"
+        android:textColor="@android:color/darker_gray"
+        android:id="@+id/wordHintText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hint"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:textStyle="bold"
         android:textSize="22sp"
@@ -19,5 +53,27 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:scaleType="centerCrop"
+        android:backgroundTint="@android:color/transparent"
+        android:src="@drawable/ic_wrong_"
+        android:layout_margin="20sp"
+        android:id="@+id/wrongBtn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="98sp"
+        android:layout_height="98sp"/>
+
+    <ImageButton
+        android:scaleType="centerCrop"
+        android:backgroundTint="@android:color/transparent"
+        android:src="@drawable/ic_correct_"
+        android:layout_margin="20sp"
+        android:id="@+id/correctBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="98sp"
+        android:layout_height="98sp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
