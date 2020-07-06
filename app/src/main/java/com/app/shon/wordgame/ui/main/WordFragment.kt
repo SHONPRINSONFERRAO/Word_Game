@@ -13,10 +13,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.app.shon.wordgame.R
 import kotlinx.android.synthetic.main.main_fragment.view.*
-import org.json.JSONArray
-import java.io.IOException
-import java.nio.charset.StandardCharsets
-import kotlin.random.Random
 
 
 class WordFragment : Fragment() {
@@ -29,8 +25,10 @@ class WordFragment : Fragment() {
     private lateinit var animMove: Animation
     private lateinit var viewModel: WordViewModel
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         val view = inflater.inflate(R.layout.main_fragment, container, false)
 
         val application = requireNotNull(this.activity).application
@@ -53,11 +51,15 @@ class WordFragment : Fragment() {
         animIn.startOffset = 3000
         anim.addAnimation(animIn)
 
-        animMove = AnimationUtils.loadAnimation(requireContext(),
-            R.anim.annim)
+        animMove = AnimationUtils.loadAnimation(
+            requireContext(),
+            R.anim.annim
+        )
 
-        animBounce = AnimationUtils.loadAnimation(requireContext(),
-            R.anim.bounce)
+        animBounce = AnimationUtils.loadAnimation(
+            requireContext(),
+            R.anim.bounce
+        )
 
         view.wordText.setOnClickListener { viewModel.getNewWord() }
 

@@ -72,7 +72,7 @@ class WordViewModel(context: Application) : AndroidViewModel(context) {
         return json
     }
 
-    private fun timer(){
+    private fun timer() {
         val task: TimerTask = object : TimerTask() {
             override fun run() {
                 getNewWord()
@@ -88,19 +88,18 @@ class WordViewModel(context: Application) : AndroidViewModel(context) {
         timer.cancel()
     }
 
-    private fun timerUpdater()
-    {
+    private fun timerUpdater() {
         Handler(Looper.getMainLooper()).post {
-        object : CountDownTimer(8000, 1000) {
-            override fun onTick(millisUntilFinished: Long) {
-                _fameTimer.postValue(Math.toIntExact(millisUntilFinished/1000))
-                println("Time "+millisUntilFinished/1000)
-            }
+            object : CountDownTimer(8000, 1000) {
+                override fun onTick(millisUntilFinished: Long) {
+                    _fameTimer.postValue(Math.toIntExact(millisUntilFinished / 1000))
+                    println("Time " + millisUntilFinished / 1000)
+                }
 
-            override fun onFinish() {
-               // _fameTimer.postValue(0)
-            }
-        }.start()
+                override fun onFinish() {
+                    // _fameTimer.postValue(0)
+                }
+            }.start()
         }
     }
 
