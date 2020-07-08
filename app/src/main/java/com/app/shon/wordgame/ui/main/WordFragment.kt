@@ -9,8 +9,11 @@ import android.view.animation.Animation
 import android.view.animation.AnimationSet
 import android.view.animation.AnimationUtils
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import com.app.shon.wordgame.R
 import kotlinx.android.synthetic.main.main_fragment.view.*
 
@@ -61,8 +64,6 @@ class WordFragment : Fragment() {
             R.anim.bounce
         )
 
-        view.wordText.setOnClickListener { viewModel.getNewWord() }
-
         viewModel.fameTimer.observe(viewLifecycleOwner, Observer {
             view.timerTxtView.text = it.toString()
             view.timerTxtView.startAnimation(animBounce)
@@ -70,12 +71,81 @@ class WordFragment : Fragment() {
 
         viewModel.word.observe(viewLifecycleOwner, Observer {
             view.wordText.text = it.toString()
+        })
+
+        viewModel.hintList.observe(viewLifecycleOwner, Observer {
+            view.wordHintText.text = it.toString()
             view.wordHintText.startAnimation(animMove)
         })
 
+        view.correctBtn.setOnClickListener {
+            val value = viewModel.wordTranslation.value ?: ""
+            if (value == view.wordHintText.text) {
+                viewModel.updateScore()
+                viewModel.updateGame(true)
+            } else {
+                viewModel.updateGame(false)
+                /* viewModel.let {
+                     it.cancelTimer()
+                     it.getNextHint()
+                 }*/
+            }
+        }
+
+        viewModel.score.observe(viewLifecycleOwner, Observer {
+            println("SCORE " + it)
+        })
+
+        viewModel.gameOver.observe(viewLifecycleOwner, Observer {
+            val answer = viewModel.answerCorrect.value ?: false
+            if (it && answer) {
+                findNavController()
+                    .navigate(WordFragmentDirections.actionHomeToSuccessPage())
+                viewModel.resetParams()
+            } else if (it) {
+                findNavController()
+                    .navigate(WordFragmentDirections.actionHomeToFailPage())
+                viewModel.resetParams()
+            }
+        })
+
+        view.wrongBtn.setOnClickListener {
+            val value = viewModel.wordTranslation.value ?: ""
+            if (value != view.wordHintText.text) {
+                viewModel.updateScore()
+                viewModel.let {
+                    it.cancelTimer()
+                    it.getNextHint()
+                }
+            } else if (value == view.wordHintText.text) {
+                viewModel.updateGame(false)
+            }
+
+
+        }
 
         return view
     }
 
+    private fun goToScore() {
+        val action = WordFragmentDirections.actionHomeToScore()
+        action.score = viewModel.score.value ?: 0
+        NavHostFragment.findNavController(this).navigate(action)
+    }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        setFragmentResultListener("result") { key, bundle ->
+            val endGame = bundle.getBoolean("endGame") ?: false
+            if (endGame) {
+                goToScore()
+            } else {
+                viewModel.getNewWord()
+            }
+        }
+        setFragmentResultListener("event") { key, bundle ->
+            viewModel.getNewWord()
+        }
+    }
 }

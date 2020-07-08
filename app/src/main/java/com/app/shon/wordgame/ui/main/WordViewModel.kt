@@ -11,12 +11,14 @@ import org.json.JSONArray
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.random.Random
 
 
 class WordViewModel(context: Application) : AndroidViewModel(context) {
     // TODO: Implement the ViewModel
 
+    private lateinit var countDownTimer: CountDownTimer
     private lateinit var wordRepo: JSONArray
     private lateinit var wordsJson: String
     private val timer = Timer("Timer")
@@ -24,6 +26,12 @@ class WordViewModel(context: Application) : AndroidViewModel(context) {
     private var _word = MutableLiveData<String>()
     private var _wordTranslation = MutableLiveData<String>()
     private var _fameTimer = MutableLiveData<Int>()
+    private var _hintList = MutableLiveData<String>()
+    private var _hintListData = ArrayList<String>()
+    private var _score = MutableLiveData<Int>()
+    private var _gameSize = MutableLiveData<Int>()
+    private var _gameOver = MutableLiveData<Boolean>()
+    private var _answerCorrect = MutableLiveData<Boolean>()
 
     val word: LiveData<String>
         get() = _word
@@ -34,9 +42,24 @@ class WordViewModel(context: Application) : AndroidViewModel(context) {
     val fameTimer: LiveData<Int>
         get() = _fameTimer
 
+    val hintList: LiveData<String>
+        get() = _hintList
+
+    val score: LiveData<Int>
+        get() = _score
+
+    val gameOver: LiveData<Boolean>
+        get() = _gameOver
+
+    val answerCorrect: LiveData<Boolean>
+        get() = _answerCorrect
+
     init {
+        _score.value = 0
+        _gameSize.value = 1
+        _gameOver.value = false
+        _answerCorrect.value = false
         fetchJson()
-        timer()
     }
 
     private fun fetchJson() {
@@ -48,12 +71,25 @@ class WordViewModel(context: Application) : AndroidViewModel(context) {
     fun getNewWord() {
         if (wordsJson.isNotEmpty()) {
             val index = Random.nextInt(wordRepo.length())
-            _fameTimer.postValue(8)
+            //_fameTimer.postValue(8)
             _word.postValue(wordRepo.getJSONObject(index).getString("text_eng"))
             _wordTranslation.postValue(wordRepo.getJSONObject(index).getString("text_spa"))
-            //view.wordText.text = word.getString("text_eng").toString()
-            timerUpdater()
+            _hintListData.add(wordRepo.getJSONObject(index).getString("text_spa"))
+            addMoreHints()
+            //timer()
+            getNextHint()
         }
+    }
+
+    private fun addMoreHints() {
+        for (item in 0..3) {
+            _hintListData.add(
+                wordRepo.getJSONObject(Random.nextInt(wordRepo.length())).getString("text_spa")
+            )
+            _hintListData.shuffle()
+        }
+        /*_hintList.postValue(_hintListData[0])
+        _hintListData.removeAt(0)*/
     }
 
     private fun loadJSONFromAsset(): String {
@@ -75,12 +111,33 @@ class WordViewModel(context: Application) : AndroidViewModel(context) {
     private fun timer() {
         val task: TimerTask = object : TimerTask() {
             override fun run() {
-                getNewWord()
+                //getNewWord()
+                if (_hintListData.size > 0) {
+                    getNextHint()
+                } else {
+                    getNewWord()
+                }
+
             }
         }
 
         val delay = 8000L
         timer.scheduleAtFixedRate(task, 0, delay)
+    }
+
+    fun getNextHint() {
+        if (_hintListData.size > 0) {
+            _hintList.postValue(_hintListData[0])
+            _hintListData.removeAt(0)
+            timerUpdater()
+        } else {
+            /*if (_gameSize.value == 5) {
+                _gameOver.value = true
+            } else {
+                getNewWord()
+            }*/
+            _gameOver.value = true
+        }
     }
 
     override fun onCleared() {
@@ -90,17 +147,39 @@ class WordViewModel(context: Application) : AndroidViewModel(context) {
 
     private fun timerUpdater() {
         Handler(Looper.getMainLooper()).post {
-            object : CountDownTimer(8000, 1000) {
+            countDownTimer = object : CountDownTimer(8000, 1000) {
                 override fun onTick(millisUntilFinished: Long) {
                     _fameTimer.postValue(Math.toIntExact(millisUntilFinished / 1000))
-                    println("Time " + millisUntilFinished / 1000)
                 }
 
                 override fun onFinish() {
                     // _fameTimer.postValue(0)
+                    getNextHint()
                 }
             }.start()
         }
+
+    }
+
+    fun updateScore() {
+        _score.value = _score.value?.plus(1)
+    }
+
+    fun cancelTimer() {
+        countDownTimer.cancel()
+    }
+
+    fun updateGame(answer: Boolean) {
+        _answerCorrect.value = answer
+        _gameOver.value = true
+    }
+
+    fun resetParams() {
+        //_score.value = 0
+        _gameOver.value = false
+        _answerCorrect.value = false
+        _hintListData.clear()
+        cancelTimer()
     }
 
 }

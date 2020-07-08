@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ff0033">
+
+        <ImageView
+            android:layout_width="0sp"
+            android:layout_height="0sp"
+            android:src="@drawable/ic_wrong"
+            app:layout_constraintHeight_percent="0.8"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.8" />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/endGameBtn"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0sp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10sp"
+            android:backgroundTint="@android:color/transparent"
+            android:text="END GAME"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/continueBtn"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:strokeColor="@android:color/white"
+            app:strokeWidth="1sp" />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/continueBtn"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0sp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10sp"
+            android:backgroundTint="@android:color/transparent"
+            android:text="CONTINUE"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/endGameBtn"
+            app:strokeColor="@android:color/white"
+            app:strokeWidth="1sp" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</layout>
